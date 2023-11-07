@@ -38,8 +38,11 @@ public class UserServlet extends HttpServlet {
 		String action = request.getServletPath();
 		try {
 			switch (action) {
-			case "/insert":
-				insertUser(request, response);
+			case "/signup":
+				signup(request, response);
+				break;
+			case "/login":
+				login(request,response);
 				break;
 			default:
 				break;
@@ -65,12 +68,29 @@ public class UserServlet extends HttpServlet {
         }
         return formDataMap;
     }
-	private void insertUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+	private void signup(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
         Map<String, String> map = parseFormData(request.getReader());//takes the reader of the request and puts it into a map
 		String username = map.get("username");                       //so we can use it like map.get("username"), etc.
 		String password = map.get("password");
+		if  (username.length() == 0 || password.length() == 0) return;
 		User newUser = new User(username, password);
-		userDAO.insertUser(newUser);
-		response.sendRedirect("list");//not sure what this is for yet
+		if (userDAO.insertUser(newUser)) {
+			System.out.println("successfully signed up");
+//			response.sendRedirect("list");//i think this is for navigation
+		} else {
+			System.out.println("failed to sign up");
+		}
+	}
+	private void login(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        Map<String, String> map = parseFormData(request.getReader());//takes the reader of the request and puts it into a map
+		String username = map.get("username");                       //so we can use it like map.get("username"), etc.
+		String password = map.get("password");
+		User user = new User(username, password);
+		if (userDAO.userExists(user)) {
+//			response.sendRedirect("list");
+			System.out.println("successfully logged in");
+		} else {
+			System.out.println("failed to login");
+		}
 	}
 }
