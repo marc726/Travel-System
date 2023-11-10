@@ -81,9 +81,9 @@ public class UserServlet extends HttpServlet {
         return formDataMap;
     }
 	private void signup(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        Map<String, String> map = parseFormData(request.getReader());//takes the reader of the request and puts it into a map
-		String username = map.get("username");                       //so we can use it like map.get("username"), etc.
-		String password = map.get("password");
+//        Map<String, String> map = parseFormData(request.getReader());//takes the reader of the request and puts it into a map
+		String username = request.getParameter("username");                       //so we can use it like map.get("username"), etc.
+		String password = request.getParameter("password");
 	    if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
 	        // Handle the case where either username or password is null or empty
 	        System.out.println("username or password is missing");
@@ -92,9 +92,9 @@ public class UserServlet extends HttpServlet {
 		User newUser = new User(username, password);
 		if (userDAO.insertUser(newUser)) {
 			System.out.println("successfully signed up");
-//			response.sendRedirect("list");//i think this is for navigation
+			response.sendRedirect("loggedin.jsp");
 		} else {
-			System.out.println("failed to sign up");
+			response.sendRedirect("signup.jsp?error=true");
 		}
 	}
 	private void login(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
