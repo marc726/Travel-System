@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import dao.UserDAO;
 import model.User;
@@ -28,31 +29,42 @@ public class UserServlet extends HttpServlet {
 	
 	public void init() {
 		userDAO = new UserDAO();
+		System.out.println("UserServlet initialized");
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("doPost called");
 		doGet(request, response);
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("doGet called");
 		String action = request.getServletPath();
 		try {
 			switch (action) {
-			case "/signup":
-				signup(request, response);
-				break;
-			case "/login":
-				login(request,response);
-				break;
-			default:
-				break;
+				case "/signup":
+					signup(request, response);
+					break;
+				case "/login":
+					login(request, response);
+					break;
+				case "/logout":
+					logout(request, response); // Add this case for logout
+					break;
+				default:
+					// If no action matches, you can set a default action
+					response.sendRedirect("login.jsp"); // or some default page
+					break;
 			}
 		} catch (SQLException ex) {
 			throw new ServletException(ex);
 		}
 	}
+	
     public static Map<String, String> parseFormData(BufferedReader reader) {// not sure if this works with every request body
+		System.out.println("parseFormData called");
         String requestBody = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+        System.out.println(requestBody);
     	Map<String, String> formDataMap = new HashMap<>();
         String[] lines = requestBody.split("\n");
         String name = null;
@@ -72,7 +84,11 @@ public class UserServlet extends HttpServlet {
         Map<String, String> map = parseFormData(request.getReader());//takes the reader of the request and puts it into a map
 		String username = map.get("username");                       //so we can use it like map.get("username"), etc.
 		String password = map.get("password");
-		if  (username.length() == 0 || password.length() == 0) return;
+	    if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
+	        // Handle the case where either username or password is null or empty
+	        System.out.println("username or password is missing");
+	        return;
+	    }
 		User newUser = new User(username, password);
 		if (userDAO.insertUser(newUser)) {
 			System.out.println("successfully signed up");
@@ -82,15 +98,27 @@ public class UserServlet extends HttpServlet {
 		}
 	}
 	private void login(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        Map<String, String> map = parseFormData(request.getReader());//takes the reader of the request and puts it into a map
-		String username = map.get("username");                       //so we can use it like map.get("username"), etc.
-		String password = map.get("password");
-		User user = new User(username, password);
-		if (userDAO.userExists(user)) {
-//			response.sendRedirect("list");
-			System.out.println("successfully logged in");
-		} else {
-			System.out.println("failed to login");
-		}
+	    System.out.println("login called");
+	    String username = request.getParameter("username");
+	    String password = request.getParameter("password");
+	    User user = new User(username, password);
+
+	    if (userDAO.userExists(user)) {
+	        // If user exists, set the username attribute in the session
+	        request.getSession().setAttribute("username", username);
+	        // Redirect to loggedin.jsp
+	        response.sendRedirect("loggedin.jsp");
+	    } else {
+	        // If user does not exist, redirect back to login page with error message
+	        response.sendRedirect("login.jsp?error=true");
+	    }
 	}
+	private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    	HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.invalidate();
+		}
+		response.sendRedirect("login.jsp");
+	}
+
 }

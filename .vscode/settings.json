@@ -1,0 +1,9 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "src/main/webapp/WEB-INF/lib/bootstrap.jar",
+        "src/main/webapp/WEB-INF/lib/javax.servlet-3.1.jar",
+        "src/main/webapp/WEB-INF/lib/mysql-connector-j-8.2.0.jar",
+        "src/main/webapp/WEB-INF/lib/tomcat-juli.jar"
+    ]
+}
