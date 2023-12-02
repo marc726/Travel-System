@@ -30,24 +30,40 @@ public class UserDAO {
 	}
 
 	public boolean insertUser(User user) throws SQLException {
-		try {
-			Connection connection = getConnection();
-			PreparedStatement insertUser = connection.prepareStatement("INSERT INTO users (username, password) VALUES (?, ?);");
-		    PreparedStatement checkForExistence = connection.prepareStatement("SELECT * FROM users WHERE username = ?");
-			checkForExistence.setString(1, user.username);
-			ResultSet results = checkForExistence.executeQuery();
-			while (results.next()) {
-				if (results.getRow() == 1) return false;
-			}
-		    insertUser.setString(1, user.username);
-			insertUser.setString(2, user.password);
-			insertUser.executeUpdate();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
+        try (Connection connection = getConnection()) {
+            String sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?);";
+            try (PreparedStatement insertUser = connection.prepareStatement(sql)) {
+                insertUser.setString(1, user.username);
+                insertUser.setString(2, user.password);
+                insertUser.setInt(3, user.role);
+                int affectedRows = insertUser.executeUpdate();
+                return affectedRows > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+	public User getUser(String username) {
+        try (Connection connection = getConnection()) {
+            String sql = "SELECT * FROM users WHERE username = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, username);
+                try (ResultSet results = statement.executeQuery()) {
+                    if (results.next()) {
+                        String password = results.getString("password");
+                        int role = results.getInt("role");
+                        return new User(username, password, role);
+                    }
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 	public boolean userExists(User user) {
 		try {

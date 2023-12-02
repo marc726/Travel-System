@@ -42,9 +42,6 @@ public class UserServlet extends HttpServlet {
 		String action = request.getServletPath();
 		try {
 			switch (action) {
-				case "/signup":
-					signup(request, response);
-					break;
 				case "/login":
 					login(request, response);
 					break;
@@ -52,7 +49,7 @@ public class UserServlet extends HttpServlet {
 					logout(request, response); // Add this case for logout
 					break;
 				default:
-					// If no action matches, you can set a default action
+					// If no action matches, we can set a default action
 					response.sendRedirect("login.jsp"); // or some default page
 					break;
 			}
@@ -80,52 +77,52 @@ public class UserServlet extends HttpServlet {
         }
         return formDataMap;
     }
-	private void signup(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-//        Map<String, String> map = parseFormData(request.getReader());//takes the reader of the request and puts it into a map
-		String username = request.getParameter("username");                       //so we can use it like map.get("username"), etc.
-		String password = request.getParameter("password");
-	    if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
-	        // Handle the case where either username or password is null or empty
-	        System.out.println("username or password is missing");
-	        return;
-	    }
-		User newUser = new User(username, password);
-		if (userDAO.insertUser(newUser)) {
-			System.out.println("successfully signed up");
-			response.sendRedirect("loggedin.jsp");
-		} else {
-			response.sendRedirect("signup.jsp?error=true");
-		}
-	}
-	private void login(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-	    System.out.println("login called");
-	    String username = request.getParameter("username");
-	    String password = request.getParameter("password");
-	    User user = new User(username, password);
 
-		//admin login
-		if (username.equals("admin") && password.equals("admin")) {
-			request.getSession().setAttribute("username", username);
-			response.sendRedirect("AdminDash.jsp");
-			return;
+    private void login(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        System.out.println("login called");
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+
+		// Check for admin credentials
+		if ("admin".equals(username) && "admin".equals(password)) {
+			// Set admin session attributes
+			HttpSession session = request.getSession();
+			session.setAttribute("username", username);
+			session.setAttribute("role", -1); // Assuming -1 as a special indicator for admin role
+
+			response.sendRedirect("adminDash.jsp"); // Redirect to admin dashboard
+			return; // Important to prevent further processing
 		}
 
-	    if (userDAO.userExists(user)) {
-	        // If user exists, set the username attribute in the session
-	        request.getSession().setAttribute("username", username);
-	        // Redirect to loggedin.jsp
-	        response.sendRedirect("loggedin.jsp");
-	    } else {
-	        // If user does not exist, redirect back to login page with error message
-	        response.sendRedirect("login.jsp?error=true");
-	    }
-	}
+        User user = userDAO.getUser(username);
+
+        if (user != null && user.password.equals(password)) {
+            // User exists and password matches
+            HttpSession session = request.getSession();
+            session.setAttribute("username", user.username);
+            session.setAttribute("role", user.role);
+
+            // Redirect based on role
+            if (user.role == 1) {
+                // Role 1 indicates a customer representative
+                response.sendRedirect("customerRepDashboard.jsp"); // Redirect to customer representative dashboard
+            } else {
+                // regular users (role 0)
+                response.sendRedirect("customerDash.jsp"); // Redirect to the logged in customer page
+            }
+        } else {
+            // User does not exist or password does not match
+            response.sendRedirect("login.jsp?error=true"); // Redirect back to login page with an error message
+        }
+    }
+
 	private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    	HttpSession session = request.getSession(false);
-		if (session != null) {
-			session.invalidate();
-		}
-		response.sendRedirect("login.jsp");
-	}
+        System.out.println("logout called");
+        HttpSession session = request.getSession(false); // false means don't create a new session if one doesn't exist
+        if (session != null) {
+            session.invalidate(); // Invalidate the session, removing any session data
+        }
+        response.sendRedirect("login.jsp"); // Redirect to the login page
+    }
 
 }

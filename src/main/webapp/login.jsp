@@ -15,6 +15,5 @@
         <input type="password" id="password" name="password" required><br><br>
         <input type="submit" value="Login">
     </form>
-    <a href="signup.jsp">Need an account?</a>
 </body>
 </html>
