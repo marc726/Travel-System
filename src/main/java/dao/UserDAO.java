@@ -35,6 +35,7 @@ public class UserDAO {
             try (PreparedStatement insertUser = connection.prepareStatement(sql)) {
                 insertUser.setString(1, user.username);
                 insertUser.setString(2, user.password);
+				insertUser.setString(3, user.name);
                 insertUser.setInt(3, user.role);
                 int affectedRows = insertUser.executeUpdate();
                 return affectedRows > 0;
@@ -53,8 +54,9 @@ public class UserDAO {
                 try (ResultSet results = statement.executeQuery()) {
                     if (results.next()) {
                         String password = results.getString("password");
+						String name = results.getString("name");
                         int role = results.getInt("role");
-                        return new User(username, password, role);
+                        return new User(username, password, name, role);
                     }
                     return null;
                 }
