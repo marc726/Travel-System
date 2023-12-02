@@ -103,6 +103,13 @@ public class UserServlet extends HttpServlet {
 	    String password = request.getParameter("password");
 	    User user = new User(username, password);
 
+		//admin login
+		if (username.equals("admin") && password.equals("admin")) {
+			request.getSession().setAttribute("username", username);
+			response.sendRedirect("AdminDash.jsp");
+			return;
+		}
+
 	    if (userDAO.userExists(user)) {
 	        // If user exists, set the username attribute in the session
 	        request.getSession().setAttribute("username", username);
