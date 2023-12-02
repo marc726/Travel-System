@@ -9,7 +9,7 @@
 
     <!-- Form for Adding a New Customer Representative -->
     <h2>Add New Representative</h2>
-    <form action="CustomerRepServlet" method="POST">
+    <form action="CustomerRepDAO" method="POST">
         <input type="hidden" name="action" value="add">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br><br>
@@ -20,7 +20,7 @@
 
     <!-- Form for Editing an Existing Customer Representative -->
     <h2>Edit Representative</h2>
-    <form action="CustomerRepServlet" method="POST">
+    <form action="CustomerRepDAO" method="POST">
         <input type="hidden" name="action" value="edit">
         <label for="username">Select Representative:</label>
         <select name="username" id="username">
@@ -33,7 +33,7 @@
 
     <!-- Form for Deleting an Existing Customer Representative -->
     <h2>Delete Representative</h2>
-    <form action="CustomerRepServlet" method="POST">
+    <form action="CustomerRepDAO" method="POST">
         <input type="hidden" name="action" value="delete">
         <label for="delUsername">Select Representative:</label>
         <select name="delUsername" id="delUsername">
