@@ -88,7 +88,6 @@ public class UserServlet extends HttpServlet {
 			// Set admin session attributes
 			HttpSession session = request.getSession();
 			session.setAttribute("username", username);
-			session.setAttribute("role", -1); // Assuming -1 as a special indicator for admin role
 
 			response.sendRedirect("adminDash.jsp"); // Redirect to admin dashboard
 			return; // Important to prevent further processing
