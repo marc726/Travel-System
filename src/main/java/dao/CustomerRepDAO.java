@@ -3,9 +3,11 @@ package dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import model.User;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomerRepDAO {
     private String jdbcURL = "jdbc:mysql://localhost:3306/travelsystem";
@@ -64,5 +66,25 @@ public class CustomerRepDAO {
             int affectedRows = preparedStatement.executeUpdate();
             return affectedRows > 0;
         }
+    }
+
+
+    public List<User> getAllCustomerReps() throws SQLException {
+        System.out.println("Getting all customer reps");
+        List<User> customerReps = new ArrayList<>();
+        String sql = "SELECT * FROM users WHERE role = 1;";
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            try (ResultSet results = preparedStatement.executeQuery()) {
+                while (results.next()) {
+                    String username = results.getString("username");
+                    String password = results.getString("password");
+                    String name = results.getString("name");
+                    int role = results.getInt("role");
+                    customerReps.add(new User(username, password, name, role));
+                }
+            }
+        }
+        return customerReps;
     }
 }

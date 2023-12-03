@@ -29,23 +29,6 @@ public class UserDAO {
 		return connection;
 	}
 
-	public boolean insertUser(User user) throws SQLException {
-        try (Connection connection = getConnection()) {
-            String sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?);";
-            try (PreparedStatement insertUser = connection.prepareStatement(sql)) {
-                insertUser.setString(1, user.username);
-                insertUser.setString(2, user.password);
-				insertUser.setString(3, user.name);
-                insertUser.setInt(3, user.role);
-                int affectedRows = insertUser.executeUpdate();
-                return affectedRows > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
 	public User getUser(String username) {
         try (Connection connection = getConnection()) {
             String sql = "SELECT * FROM users WHERE username = ?";
