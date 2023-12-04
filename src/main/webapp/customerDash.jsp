@@ -12,12 +12,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Logged In</title>
+    <title>Search Flights</title>
 </head>
 <body>
     <h1>Welcome, <%= username %></h1>
-    <!-- The link for logging out should point to the logout action in your servlet -->
-    <a href="<%=request.getContextPath()%>/logout">Logout</a>
     <script>
 	    function validateForm() {
 	        var selectedDate = document.getElementById('datepicker').value;
@@ -42,21 +40,21 @@
 	            return false; // Block form submission
 	        }
 
-	        // Validate lowerStops is smaller than higherStops (excluding "any")
-	        if (parseInt(lowerStops) >= parseInt(higherStops) && higherStops !== 'any') {
-	            alert('Lower number of stops must be smaller than higher number of stops.');
-	            return false; // Block form submission
-	        }
-
 	        // Validate lowerPrice and higherPrice are numeric (excluding "any")
 	        if (lowerPrice !== 'any' && (isNaN(lowerPrice) || (higherPrice !== 'any' && isNaN(higherPrice)))) {
 	            alert('Price values must be numeric. Upper price limit may be "any"');
 	            return false; // Block form submission
 	        }
 
-	        // Validate lowerPrice is smaller than higherPrice (excluding "any")
-	        if (lowerPrice !== 'any' && (parseInt(lowerPrice) >= parseInt(higherPrice) && higherPrice !== 'any')) {
-	            alert('Lower price must be smaller than higher price.');
+	     // Validate lowerStops is smaller than or equal to higherStops (excluding "any")
+	        if (parseInt(lowerStops) > parseInt(higherStops) && higherStops !== 'any') {
+	            alert('Lower number of stops must be smaller than or equal to the higher number of stops.');
+	            return false; // Block form submission
+	        }
+
+	        // Validate lowerPrice is smaller than or equal to higherPrice (excluding "any")
+	        if (lowerPrice !== 'any' && (parseInt(lowerPrice) > parseInt(higherPrice) && higherPrice !== 'any')) {
+	            alert('Lower price must be smaller than or equal to the higher price.');
 	            return false; // Block form submission
 	        }
 	        
@@ -75,7 +73,8 @@
 	        return true;
 	    }
 	</script>
-    <form action="<%=request.getContextPath()%>/getFlights" method="get" onsubmit="return validateForm();">
+    <form action="<%=request.getContextPath()%>/FlightServlet" method="get" onsubmit="return validateForm();">
+    	<input type="hidden" name="action" value="getFlights">
     	<div>
 		    <label for="sortby">Sort By:</label>
 		     <select id="sortby" name="sortby">

@@ -18,7 +18,7 @@ import dao.FlightDAO;
 import model.Flight;
 import model.User;
 
-@WebServlet("/adminpages/CustomerServlet")
+@WebServlet("/FlightServlet")
 public class FlightServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private FlightDAO flightDAO;
@@ -26,16 +26,22 @@ public class FlightServlet extends HttpServlet {
     public void init() {
         flightDAO = new FlightDAO(); // Initialize the CustomerDAO
     }
-
+    
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doPost(request, response);
+    }
+    
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-
+       
+        System.out.println(action);
         switch (action) {
-		    case "/getFlights":
+		    case "getFlights":
 		        getFlights(request, response);
 		        break;
 		    default:
-		        response.sendRedirect("customerDashboard.jsp");
+		        response.sendRedirect("customerDash.jsp");
 		        break;
 		}
     }
@@ -75,6 +81,6 @@ public class FlightServlet extends HttpServlet {
 		}
  		
 		request.getSession().setAttribute("flights", filteredFlights);
-		response.sendRedirect("loggedin.jsp");
+		response.sendRedirect("customerDash.jsp");
 	}
 }
