@@ -2,6 +2,9 @@ package web;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +23,20 @@ public class CustomerServlet extends HttpServlet {
         CustomerDAO = new CustomerDAO(); // Initialize the CustomerDAO
     }
 
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+            System.out.println("CustomerServlet doGet called");
+            List<User> customers = CustomerDAO.getAllCustomers(); // Method to fetch all customers
+            request.setAttribute("customers", customers);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/adminpages/customerManager.jsp");
+            dispatcher.forward(request, response);
+        } catch (SQLException e) {
+            throw new ServletException("Database error: " + e.getMessage());
+        }
+    }
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
@@ -35,7 +52,7 @@ public class CustomerServlet extends HttpServlet {
                     deleteCustomer(request, response);
                     break;
                 default:
-                    response.sendRedirect("customerDashboard.jsp");
+                    response.sendRedirect("customerManager.jsp");
                     break;
             }
         } catch (SQLException e) {
@@ -58,13 +75,13 @@ public class CustomerServlet extends HttpServlet {
             request.setAttribute("message", "Error adding customer.");
         }
 
-        request.getRequestDispatcher("customerDashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("customerManager.jsp").forward(request, response);
     }
 
     private void editCustomer(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
         String username = request.getParameter("username");
-        String password = request.getParameter("password"); // Assuming password can be changed
-        String name = request.getParameter("name"); // Assuming name can be changed
+        String password = request.getParameter("newPassword"); // Assuming password can be changed
+        String name = request.getParameter("newName"); // Assuming name can be changed
         int role = 0; // Assuming role 0 for regular customers
 
         User user = new User(username, password, name, role);
@@ -76,11 +93,11 @@ public class CustomerServlet extends HttpServlet {
             request.setAttribute("message", "Error updating customer.");
         }
 
-        request.getRequestDispatcher("customerDashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("customerManager.jsp").forward(request, response);
     }
 
     private void deleteCustomer(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
-        String username = request.getParameter("username");
+        String username = request.getParameter("delUsername");
 
         boolean isDeleted = CustomerDAO.deleteUser(username);
 
@@ -90,6 +107,6 @@ public class CustomerServlet extends HttpServlet {
             request.setAttribute("message", "Error deleting customer.");
         }
 
-        request.getRequestDispatcher("customerDashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("customerManager.jsp").forward(request, response);
     }
 }
