@@ -3,18 +3,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>Signup</title>
 </head>
 <body>
-    <h1>Login</h1>
+    <h1>Signup</h1>
 <!-- form points to the servlet mapping, method POST -->
-<form action="<%=request.getContextPath()%>/login" method="post">
+    <form action="<%=request.getContextPath()%>/signup" method="post">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br><br>
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br><br>
-        <input type="submit" value="Login">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <input type="submit" value="Signup">
+        
     </form>
-    <a href="signup.jsp">Need an account?</a>
+    <a href="login.jsp">Already have an account?</a>
 </body>
 </html>

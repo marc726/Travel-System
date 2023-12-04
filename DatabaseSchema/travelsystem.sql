@@ -22,20 +22,34 @@ CREATE TABLE Aircraft(
 	PRIMARY KEY (aircraft_number, alid),
 	FOREIGN KEY (alid) REFERENCES Airline(alid)
 );
+
+CREATE TABLE Airport(
+	arid VARCHAR(3),
+	name VARCHAR(100),
+	location VARCHAR(100),
+	PRIMARY KEY(arid)
+);
+
 CREATE TABLE Flights(
 	flight_number INT,
 	alid VARCHAR(2),
 	aircraft_number INT,
 	price FLOAT,
 	is_domestic BOOLEAN,
-	is_roundtrip BOOLEAN,
-	is_direct BOOLEAN,
-	departure_airport VARCHAR(100),
-	destination_airport VARCHAR(100),
+	roundtrip INT,
+	nextflight INT,
+	departure_airport VARCHAR(3),
+	destination_airport VARCHAR(3),
+	departure_time TIME,
 	departure_date DATE,
+	arrival_time TIME,
 	arrival_date DATE,
 	PRIMARY KEY (flight_number),
+	FOREIGN KEY (departure_airport) REFERENCES Airport(arid),
+	FOREIGN KEY (destination_airport ) REFERENCES Airport(arid),
 	FOREIGN KEY (alid) REFERENCES Airline(alid),
+	FOREIGN KEY (roundtrip) REFERENCES Flights(flight_number),
+	FOREIGN KEY (nextflight) REFERENCES Flights(flight_number),
 	FOREIGN KEY (aircraft_number) REFERENCES Aircraft(aircraft_number)
 );
 
@@ -48,12 +62,6 @@ CREATE TABLE Waiting_List(
 );
 
 
-CREATE TABLE Airport(
-	arid VARCHAR(3),
-	name VARCHAR(100),
-	location VARCHAR(100),
-	PRIMARY KEY(arid)
-);
 
 CREATE TABLE Ticket(
 	seat_num INT,
