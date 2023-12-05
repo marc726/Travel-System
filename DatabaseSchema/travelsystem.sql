@@ -67,7 +67,7 @@ CREATE TABLE Ticket(
 	class_type VARCHAR(100),
 	username VARCHAR(100),
 	purchase_date DATE DEFAULT (CURDATE()),
-	ticket_num INT,
+	ticket_num INT AUTO_INCREMENT,
 	booking_fee FLOAT,
 	flight_number INT,
 	PRIMARY KEY (ticket_num, flight_number, username),

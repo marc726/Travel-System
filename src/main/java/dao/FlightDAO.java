@@ -128,4 +128,49 @@ public class FlightDAO {
 		}
 	}
 	
+	public boolean bookTicket(int flight_number, String username, String classType) {
+		try {
+		Connection connection = getConnection();
+		PreparedStatement flight_exists = connection.prepareStatement("SELECT COUNT(*) FROM flights WHERE flight_number = ?");
+		flight_exists.setInt(1, flight_number);
+		ResultSet resultSet = flight_exists.executeQuery();
+		resultSet.next();
+		if (resultSet.getInt(1) == 0) {//if flight does not exist
+			System.out.println("Flight does not exist");
+			return false;
+		}
+		PreparedStatement current_seats_query = connection.prepareStatement("SELECT COUNT(*) FROM ticket WHERE ticket.flight_number = ?");
+		PreparedStatement max_seats_query = connection.prepareStatement("SELECT num_seats FROM flights, aircraft WHERE flights.aircraft_number = aircraft.aircraft_number AND flights.flight_number = ?;");
+		PreparedStatement fare_query = connection.prepareStatement("SELECT price FROM flights WHERE flights.flight_number = ?;");
+
+		current_seats_query.setInt(1, flight_number);
+		max_seats_query.setInt(1, flight_number);
+		fare_query.setInt(1, flight_number);
+		resultSet = current_seats_query.executeQuery();
+		resultSet.next();
+		int current_seats = resultSet.getInt(1);
+		resultSet = max_seats_query.executeQuery();
+		resultSet.next();
+		int max_seats = resultSet.getInt(1);
+		resultSet = fare_query.executeQuery();
+		resultSet.next();
+		float fare = resultSet.getFloat(1);
+		System.out.println(current_seats + " " + max_seats + " " + fare);
+		if (current_seats < max_seats) { //there are seats available
+			PreparedStatement insertTicket = connection.prepareStatement("INSERT INTO `ticket` (`seat_num`, `fare`, `class_type`, `username`, `booking_fee`, `flight_number`) VALUES (?, ?, ?, ?, 10, ?);");
+			insertTicket.setFloat(1,current_seats + 1);
+			insertTicket.setFloat(2,fare);
+			insertTicket.setString(3,classType);
+			insertTicket.setString(4,username);
+			insertTicket.setInt(5,flight_number);
+			insertTicket.executeUpdate();
+			return true;
+		} else { //there are no seats available
+			return false;
+		}
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+	return false;
+	}
 }

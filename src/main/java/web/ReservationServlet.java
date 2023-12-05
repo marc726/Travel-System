@@ -38,26 +38,13 @@ public class ReservationServlet extends HttpServlet {
     }
 
     private void reserveFlight(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String flightIdStr = request.getParameter("flightId");
-        int flightId = Integer.parseInt(flightIdStr);
-
-        // Assuming you have a way to retrieve the currently logged in user
-        User loggedInUser = (User) request.getSession().getAttribute("loggedInUser");
-
-        // Check if the flight is available and can be reserved
-        Flight flight = flightDAO.getFlightById(flightId);
-        if (flight != null) {
-            int ticketAvailable = flightDAO.getTicketAvailable(flightId);
-            if (ticketAvailable > 0) {
-                // Reserve the flight for the logged-in user
-                boolean success = reservationDAO.reserveFlight(loggedInUser, flight);
-                if (success) {
-                    // Update the available tickets count
-                    flightDAO.updateTicketAvailable(flightId, ticketAvailable - 1);
-                    response.sendRedirect("customerPages/successPage.jsp");
-                    return;
-                }
-            }
-        }
+        int flight_number = Integer.parseInt(request.getParameter("flightId"));
+        String classType = request.getParameter("classType");
+        String username = request.getSession().getAttribute("username").toString();
+        
+        //Check if flight has available tickets
+        System.out.println("book ticket status: " + flightDAO.bookTicket(flight_number, username, classType));
+        //
+        response.sendRedirect("customerPages/browseFlightsCustomer.jsp");
     }
 }

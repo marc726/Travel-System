@@ -41,7 +41,6 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("username", user.getUsername());
                 session.setAttribute("role", user.getRole());
-
                 // Redirect based on role
                 if (user.getRole() == 1) {
                     response.sendRedirect("customerRepDash.jsp");
