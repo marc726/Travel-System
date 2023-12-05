@@ -44,6 +44,7 @@ CREATE TABLE Flights(
 	departure_date DATE,
 	arrival_time TIME,
 	arrival_date DATE,
+	ticket_available INT DEFAULT 5,
 	PRIMARY KEY (flight_number),
 	FOREIGN KEY (departure_airport) REFERENCES Airport(arid),
 	FOREIGN KEY (destination_airport ) REFERENCES Airport(arid),
@@ -60,8 +61,6 @@ CREATE TABLE Waiting_List(
 	FOREIGN KEY (flight_number) REFERENCES Flights(flight_number),
 	FOREIGN KEY (username) REFERENCES Users(username)
 );
-
-
 
 CREATE TABLE Ticket(
 	seat_num INT,
@@ -86,10 +85,6 @@ CREATE TABLE Questions(
 	question_id INT,
 	question_text VARCHAR(250),
 	answer_text VARCHAR(250),
-	user_id VARCHAR(100),
-	representative_id VARCHAR(100),
-	PRIMARY KEY (user_id, representative_id),
-	FOREIGN KEY (user_id) REFERENCES Users(username),
-	FOREIGN KEY (representative_id) REFERENCES Users(username)
+	PRIMARY KEY (question_id)
 );
 
