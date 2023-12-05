@@ -41,7 +41,7 @@ public class FlightServlet extends HttpServlet {
 		        getFlights(request, response);
 		        break;
 		    default:
-		        response.sendRedirect("customerDash.jsp");
+		        response.sendRedirect("customerPages/browseFlightsCustomer.jsp");
 		        break;
 		}
     }
@@ -81,6 +81,6 @@ public class FlightServlet extends HttpServlet {
 		}
  		
 		request.getSession().setAttribute("flights", filteredFlights);
-		response.sendRedirect("customerDash.jsp");
+		response.sendRedirect("customerPages/browseFlightsCustomer.jsp");
 	}
 }

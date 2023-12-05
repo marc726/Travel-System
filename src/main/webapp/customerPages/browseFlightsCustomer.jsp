@@ -199,6 +199,5 @@
 <% } else { %>
 	<div>Search for Flights Above</div>
 <%}%>
->>>>>>> 20ac3c85a225b8c8d01edc4cabf43e4622c9f3e9
 </body>
 </html>
