@@ -155,7 +155,6 @@ public class FlightDAO {
 		resultSet = fare_query.executeQuery();
 		resultSet.next();
 		float fare = resultSet.getFloat(1);
-		System.out.println(current_seats + " " + max_seats + " " + fare);
 		if (current_seats < max_seats) { //there are seats available
 			PreparedStatement insertTicket = connection.prepareStatement("INSERT INTO `ticket` (`seat_num`, `fare`, `class_type`, `username`, `booking_fee`, `flight_number`) VALUES (?, ?, ?, ?, 10, ?);");
 			insertTicket.setFloat(1,current_seats + 1);
@@ -166,6 +165,11 @@ public class FlightDAO {
 			insertTicket.executeUpdate();
 			return true;
 		} else { //there are no seats available
+			PreparedStatement addToWaitList = connection.prepareStatement("INSERT INTO `Waiting_List` (`flight_number`, `username`) VALUES (?, ?);");
+			addToWaitList.setInt(1, flight_number);
+			addToWaitList.setString(2, username);
+			addToWaitList.executeUpdate();
+			System.out.println("added to waitlist");
 			return false;
 		}
 	} catch (SQLException e) {
