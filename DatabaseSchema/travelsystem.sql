@@ -44,14 +44,13 @@ CREATE TABLE Flights(
 	departure_date DATE,
 	arrival_time TIME,
 	arrival_date DATE,
-	ticket_available INT DEFAULT 5,
 	PRIMARY KEY (flight_number),
-	FOREIGN KEY (departure_airport) REFERENCES Airport(arid),
-	FOREIGN KEY (destination_airport ) REFERENCES Airport(arid),
-	FOREIGN KEY (alid) REFERENCES Airline(alid),
-	FOREIGN KEY (roundtrip) REFERENCES Flights(flight_number),
-	FOREIGN KEY (nextflight) REFERENCES Flights(flight_number),
-	FOREIGN KEY (aircraft_number) REFERENCES Aircraft(aircraft_number)
+    FOREIGN KEY (departure_airport) REFERENCES Airport(arid),
+    FOREIGN KEY (destination_airport) REFERENCES Airport(arid),
+    FOREIGN KEY (alid) REFERENCES Airline(alid),
+    FOREIGN KEY (roundtrip) REFERENCES Flights(flight_number) ON DELETE CASCADE,
+    FOREIGN KEY (nextflight) REFERENCES Flights(flight_number) ON DELETE CASCADE,
+    FOREIGN KEY (aircraft_number) REFERENCES Aircraft(aircraft_number)
 );
 
 CREATE TABLE Waiting_List(
@@ -64,13 +63,15 @@ CREATE TABLE Waiting_List(
 
 CREATE TABLE Ticket(
 	seat_num INT,
-	fare VARCHAR(100),
+	fare FLOAT,
 	class_type VARCHAR(100),
-	purchase_date DATE,
+	username VARCHAR(100),
+	purchase_date DATE DEFAULT (CURDATE()),
 	ticket_num INT,
 	booking_fee FLOAT,
 	flight_number INT,
-	PRIMARY KEY (ticket_num, flight_number),
+	PRIMARY KEY (ticket_num, flight_number, username),
+	FOREIGN KEY (username) REFERENCES Users(username),
 	FOREIGN KEY (flight_number) REFERENCES Flights(flight_number)
 );
 CREATE TABLE Customer_Tickets(
@@ -87,4 +88,3 @@ CREATE TABLE Questions(
 	answer_text VARCHAR(250),
 	PRIMARY KEY (question_id)
 );
-

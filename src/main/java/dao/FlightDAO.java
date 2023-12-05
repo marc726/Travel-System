@@ -96,4 +96,36 @@ public class FlightDAO {
 		return null;
 
 	}
+
+	public boolean insertFlight(Flight flight) throws SQLException {
+		String sql = "INSERT INTO Flights (flight_number, alid, aircraft_number, price, is_domestic, roundtrip, nextflight, departure_airport, destination_airport, departure_time, departure_date, arrival_time, arrival_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		try (Connection connection = getConnection();
+			 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setInt(1, flight.getFlightNumber());
+			preparedStatement.setString(2, flight.getALID());
+			preparedStatement.setInt(3, flight.getAircraftNumber());
+			preparedStatement.setFloat(4, flight.getPrice());
+			preparedStatement.setBoolean(5, flight.getIsDomestic());
+			preparedStatement.setInt(6, flight.getRoundTrip());
+			preparedStatement.setInt(7, flight.getStops());
+			preparedStatement.setString(8, flight.getDepartureAirport());
+			preparedStatement.setString(9, flight.getDestinationAirport());
+			preparedStatement.setTime(10, flight.getDepartureTime());
+			preparedStatement.setDate(11, flight.getDepartureDate());
+			preparedStatement.setTime(12, flight.getArrivalTime());
+			preparedStatement.setDate(13, flight.getArrivalDate());
+			return preparedStatement.executeUpdate() > 0;
+		}
+	}
+
+	public boolean deleteFlight(int flightNumber) throws SQLException {
+		String sql = "DELETE FROM flights WHERE flight_number = ?";
+		try (Connection connection = getConnection();
+			 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setInt(1, flightNumber);
+			int rowsAffected = preparedStatement.executeUpdate();
+			return rowsAffected > 0;
+		}
+	}
+	
 }
