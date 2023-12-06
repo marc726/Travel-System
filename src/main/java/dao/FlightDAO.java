@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import model.Flight;
 import model.User;
@@ -224,6 +225,63 @@ public class FlightDAO {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	
+    public List<Flight> getReservationsByFlightNumber(int flightNumber) {
+        List<Flight> reservations = new ArrayList<>();
+        String sql = "SELECT * FROM Flights WHERE flight_number = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, flightNumber);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                // Construct Flight objects and add to the list
+                reservations.add(extractFlightFromResultSet(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reservations;
+    }
+
+    public List<Flight> getReservationsByCustomerName(String customerName) {
+        List<Flight> reservations = new ArrayList<>();
+        String sql = "SELECT Flights.* FROM Flights JOIN Ticket ON Flights.flight_number = Ticket.flight_number JOIN Users ON Ticket.username = Users.username WHERE Users.name = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, customerName);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                // Construct Flight objects and add to the list
+                reservations.add(extractFlightFromResultSet(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reservations;
+    }
+
+	private Flight extractFlightFromResultSet(ResultSet resultSet) throws SQLException {
+		int flightNumber = resultSet.getInt("flight_number");
+		String alid = resultSet.getString("alid");
+		int aircraftNumber = resultSet.getInt("aircraft_number");
+		float price = resultSet.getFloat("price");
+		boolean isDomestic = resultSet.getBoolean("is_domestic");
+		int roundTrip = resultSet.getInt("roundtrip");
+		int stops = resultSet.getInt("nextflight");
+		String departureAirport = resultSet.getString("departure_airport");
+		String destinationAirport = resultSet.getString("destination_airport");
+		Time departureTime = resultSet.getTime("departure_time");
+		Time arrivalTime = resultSet.getTime("arrival_time");
+		Date departureDate = resultSet.getDate("departure_date");
+		Date arrivalDate = resultSet.getDate("arrival_date");
+	
+		return new Flight(flightNumber, alid, aircraftNumber, price, isDomestic, roundTrip, stops, departureAirport, destinationAirport, departureTime, arrivalTime, departureDate, arrivalDate);
 	}
 	
 	

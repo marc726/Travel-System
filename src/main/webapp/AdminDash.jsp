@@ -9,7 +9,7 @@
     <ul>
         <li><a href="adminpages/customerRepManager.jsp">Customer Representative Manager</a></li>
         <li><a href="adminpages/customerManager.jsp">Customer Manager</a></li>
-        <li><a href="adminpages/salesReports.jsp">Sales Reports</a></li>
+        <li><a href="adminpages/salesReports.jsp">Sales Report by Month</a></li>
         <li><a href="adminpages/viewReservations.jsp">View Reservations</a></li>
         <li><a href="adminpages/revenueViewer.jsp">Revenue Viewer</a></li>
         <li><a href="adminpages/topCustomer.jsp">Top Customer</a></li>
