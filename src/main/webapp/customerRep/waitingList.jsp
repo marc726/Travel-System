@@ -29,7 +29,7 @@
             <label for="flightId">Flight ID:</label>
             <input type="text" id="flightId" name="flightId">
         </div>
-        <input type="submit" value="Reserve">
+        <input type="submit" value="Search">
     </form>
     <h3>List of users will appear below after search</h3>
     <c:forEach var="item" items="${waitingList}">

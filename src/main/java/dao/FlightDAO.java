@@ -100,6 +100,53 @@ public class FlightDAO {
 
 	}
 
+	public ArrayList<Flight> getFlightsByAirport(String airport) {
+		try {
+			Connection connection = getConnection();
+			PreparedStatement getFlights = connection.prepareStatement("SELECT * FROM flights WHERE destination_airport = ? OR departure_airport = ?;");
+			getFlights.setString(1, airport);
+			getFlights.setString(2, airport);
+			ResultSet results = getFlights.executeQuery();
+			ArrayList<Flight> flights = new ArrayList<Flight>();
+			PreparedStatement getStopCount = connection.prepareStatement("WITH RECURSIVE FlightCTE AS ("
+					+ "  SELECT flight_number, nextflight, 1 AS execution_count"
+					+ "  FROM flights"
+					+ "  WHERE flight_number = ?"
+					+ "  UNION ALL"
+					+ "  SELECT f.flight_number, f.nextflight, fc.execution_count + 1"
+					+ "  FROM flights f"
+					+ "  INNER JOIN FlightCTE fc ON f.flight_number = fc.nextflight)"
+					+ "  SELECT COUNT(*) AS total_executions"
+					+ "  FROM FlightCTE"
+					+ "  WHERE nextflight IS NOT NULL;");
+            while (results.next()) {
+                int flightNumber = results.getInt("flight_number");
+                String alid = results.getString("alid");
+                int aircraftNumber = results.getInt("aircraft_number");
+                float price = results.getFloat("price");
+                boolean isDomestic = results.getBoolean("is_domestic");
+                int roundTrip = results.getInt("roundtrip");
+                getStopCount.setInt(1, flightNumber);
+                ResultSet resultSet = getStopCount.executeQuery();
+                resultSet.next();
+                int stops = resultSet.getInt(1);
+                String departureAirport = results.getString("departure_airport");
+                String destinationAirport = results.getString("destination_airport");
+                Time departureTime = results.getTime("departure_time");
+                Date departureDate = results.getDate("departure_date");
+                Time arrivalTime = results.getTime("arrival_time");
+                Date arrivalDate = results.getDate("arrival_date");
+                flights.add(new Flight(flightNumber, alid, aircraftNumber,price,isDomestic, roundTrip, stops, departureAirport, destinationAirport, departureTime, arrivalTime, departureDate, arrivalDate));
+            }
+			return flights;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	
 	public boolean insertFlight(Flight flight) throws SQLException {
 		String sql = "INSERT INTO Flights (flight_number, alid, aircraft_number, price, is_domestic, roundtrip, nextflight, departure_airport, destination_airport, departure_time, departure_date, arrival_time, arrival_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		try (Connection connection = getConnection();
