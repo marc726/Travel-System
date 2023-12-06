@@ -76,4 +76,21 @@ public class TicketDAO {
         }
         return tickets;
     }
+
+    public String[] getTopRevenueCustomer() {
+        String[] topCustomerData = new String[2]; // Array to hold username and total revenue
+        String sql = "SELECT username, SUM(fare + booking_fee) AS totalRevenue FROM Ticket GROUP BY username ORDER BY totalRevenue DESC LIMIT 1";
+
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                topCustomerData[0] = resultSet.getString("username"); // Username
+                topCustomerData[1] = String.valueOf(resultSet.getDouble("totalRevenue")); // Total Revenue
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return topCustomerData;
+    }
 }

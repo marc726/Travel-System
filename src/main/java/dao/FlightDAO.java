@@ -10,7 +10,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import model.Flight;
 import model.User;
@@ -283,6 +285,42 @@ public class FlightDAO {
 	
 		return new Flight(flightNumber, alid, aircraftNumber, price, isDomestic, roundTrip, stops, departureAirport, destinationAirport, departureTime, arrivalTime, departureDate, arrivalDate);
 	}
+
+	public Map<Flight, Integer> getMostActiveFlights() {
+		Map<Flight, Integer> flightMap = new HashMap<>();
+		String sql = "SELECT f.*, IFNULL(COUNT(t.flight_number), 0) as ticket_count "
+				   + "FROM Flights f "
+				   + "LEFT JOIN Ticket t ON f.flight_number = t.flight_number "
+				   + "GROUP BY f.flight_number "
+				   + "ORDER BY ticket_count DESC";
 	
+		try (Connection connection = getConnection();
+			 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				int flightNumber = resultSet.getInt("flight_number");
+				String alid = resultSet.getString("alid");
+				int aircraftNumber = resultSet.getInt("aircraft_number");
+				float price = resultSet.getFloat("price");
+				boolean isDomestic = resultSet.getBoolean("is_domestic");
+				int roundTrip = resultSet.getInt("roundtrip");
+				int stops = resultSet.getInt("nextflight");
+				String departureAirport = resultSet.getString("departure_airport");
+				String destinationAirport = resultSet.getString("destination_airport");
+				Time departureTime = resultSet.getTime("departure_time");
+				Time arrivalTime = resultSet.getTime("arrival_time");
+				Date departureDate = resultSet.getDate("departure_date");
+				Date arrivalDate = resultSet.getDate("arrival_date");
+	
+				Flight flight = new Flight(flightNumber, alid, aircraftNumber, price, isDomestic, roundTrip, stops, departureAirport, destinationAirport, departureTime, arrivalTime, departureDate, arrivalDate);
+	
+				int ticketCount = resultSet.getInt("ticket_count");
+				flightMap.put(flight, ticketCount);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return flightMap;
+	}
 	
 }
