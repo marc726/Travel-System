@@ -131,6 +131,23 @@ public class FlightDAO {
 		}
 	}
 	
+	public ArrayList<String> getWaitingList(int flight_number) {
+		try {
+			Connection connection = getConnection();
+			PreparedStatement waiting_list_query = connection.prepareStatement("SELECT username FROM waiting_list WHERE flight_number = ?");
+			waiting_list_query.setInt(1, flight_number);
+			ResultSet resultSet = waiting_list_query.executeQuery();
+			ArrayList<String> waitingList = new ArrayList<String>();
+			while (resultSet.next()) {
+				waitingList.add(resultSet.getString(1));
+			}
+			return waitingList;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public boolean bookTicket(int flight_number, String username, String classType) {
 		try {
 		Connection connection = getConnection();
