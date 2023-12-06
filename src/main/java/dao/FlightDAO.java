@@ -172,9 +172,59 @@ public class FlightDAO {
 			System.out.println("added to waitlist");
 			return false;
 		}
-	} catch (SQLException e) {
-		e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
-	return false;
+
+	public ArrayList<Flight> getReservedFlightsForUser(String username) {
+		ArrayList<Flight> flights = new ArrayList<>();
+		String sql = "SELECT Flights.* FROM Flights " +
+					 "INNER JOIN Ticket ON Flights.flight_number = Ticket.flight_number " +
+					 "WHERE Ticket.username = ?";
+		try (Connection connection = getConnection();
+			 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setString(1, username);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				Flight flight = new Flight(
+					resultSet.getInt("flight_number"),
+					resultSet.getString("alid"),
+					resultSet.getInt("aircraft_number"),
+					resultSet.getFloat("price"),
+					resultSet.getBoolean("is_domestic"),
+					resultSet.getInt("roundtrip"),
+					resultSet.getInt("nextflight"),
+					resultSet.getString("departure_airport"),
+					resultSet.getString("destination_airport"),
+					resultSet.getTime("departure_time"),
+					resultSet.getTime("arrival_time"),
+					resultSet.getDate("departure_date"),
+					resultSet.getDate("arrival_date")
+				);
+				flights.add(flight);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return flights;
 	}
+
+	public boolean deleteReservedFlight(int flightNumber, String username) {
+		String sql = "DELETE FROM ticket WHERE flight_number = ? AND username = ?";
+		try (Connection connection = getConnection();
+			 PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setInt(1, flightNumber);
+			preparedStatement.setString(2, username);
+			int rowsAffected = preparedStatement.executeUpdate();
+			return rowsAffected > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	
 }

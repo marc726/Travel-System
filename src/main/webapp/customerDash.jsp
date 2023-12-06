@@ -15,7 +15,7 @@
     
     <h2>Flight Reservations</h2>
     <ul>
-        <li><a href="/reservations">Manage reservations</a></li>
+        <li><a href="customerPages/viewResFlights.jsp">Manage reservations</a></li>
     </ul>
     
     <h2>Customer Support</h2>
