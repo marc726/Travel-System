@@ -134,9 +134,17 @@ public class FlightDAO {
 	public boolean bookTicket(int flight_number, String username, String classType) {
 		try {
 		Connection connection = getConnection();
+		PreparedStatement check_role = connection.prepareStatement("SELECT role FROM users WHERE username = ?");
+		check_role.setString(1, username);
+		ResultSet resultSet = check_role.executeQuery();
+		resultSet.next();
+		if (resultSet.getInt(1) != 0) {//if user is not a customer
+			System.out.println("User is not a customer");
+			return false;
+		}
 		PreparedStatement flight_exists = connection.prepareStatement("SELECT COUNT(*) FROM flights WHERE flight_number = ?");
 		flight_exists.setInt(1, flight_number);
-		ResultSet resultSet = flight_exists.executeQuery();
+		resultSet = flight_exists.executeQuery();
 		resultSet.next();
 		if (resultSet.getInt(1) == 0) {//if flight does not exist
 			System.out.println("Flight does not exist");

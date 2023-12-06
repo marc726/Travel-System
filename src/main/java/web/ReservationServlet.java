@@ -32,7 +32,6 @@ public class ReservationServlet extends HttpServlet {
                 reserveFlight(request, response);
                 break;
             default:
-                response.sendRedirect("customerPages/browseFlightsCustomer.jsp");
                 break;
         }
     }
@@ -40,8 +39,17 @@ public class ReservationServlet extends HttpServlet {
     private void reserveFlight(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int flight_number = Integer.parseInt(request.getParameter("flightId"));
         String classType = request.getParameter("classType");
-        String username = request.getSession().getAttribute("username").toString();
-        
+        String username = request.getParameter("username");
+        System.out.println("username param" + username);
+        if (username != null) {   
+            //Check if flight has available tickets
+            System.out.println("book ticket status: " + flightDAO.bookTicket(flight_number, username, classType));
+            //
+            response.sendRedirect("customerRep/makeFlightReservations.jsp");
+            return;
+        	
+        }    
+        username = request.getSession().getAttribute("username").toString();   
         //Check if flight has available tickets
         System.out.println("book ticket status: " + flightDAO.bookTicket(flight_number, username, classType));
         //

@@ -56,7 +56,8 @@ CREATE TABLE Flights(
 CREATE TABLE Waiting_List(
 	flight_number INT,
 	username VARCHAR(100),
-	PRIMARY KEY (flight_number, username),
+	waiting_num INT AUTO_INCREMENT,
+	PRIMARY KEY (waiting_num, flight_number, username),
 	FOREIGN KEY (flight_number) REFERENCES Flights(flight_number),
 	FOREIGN KEY (username) REFERENCES Users(username)
 );
