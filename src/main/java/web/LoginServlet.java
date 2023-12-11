@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import dao.FlightDAO;
 import dao.UserDAO;
 import model.User;
 
@@ -15,9 +16,11 @@ import model.User;
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private UserDAO userDAO;
+    private FlightDAO flightDAO;
 
     public void init() {
         userDAO = new UserDAO();
+        flightDAO = new FlightDAO();
         System.out.println("LoginServlet initialized");
     }
 
@@ -45,6 +48,9 @@ public class LoginServlet extends HttpServlet {
                 if (user.getRole() == 1) {
                     response.sendRedirect("customerRepDash.jsp");
                 } else {
+                	String alert = flightDAO.getFreeSpots(username);
+                	System.out.println(alert);
+                	request.getSession().setAttribute("alertFreeSpots", alert);
                     response.sendRedirect("customerDash.jsp");
                 }
             } else {

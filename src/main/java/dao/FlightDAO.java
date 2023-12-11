@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -189,6 +190,35 @@ public class FlightDAO {
 				waitingList.add(resultSet.getString(1));
 			}
 			return waitingList;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getFreeSpots(String username) {
+		try {
+			Connection connection = getConnection();
+			PreparedStatement waitlist = connection.prepareStatement("SELECT w.flight_number FROM waiting_list w JOIN ticket t ON w.flight_number = t.flight_number JOIN flights f ON w.flight_number = f.flight_number JOIN aircraft a ON f.aircraft_number = a.aircraft_number WHERE w.username = ? GROUP BY w.flight_number HAVING MAX(num_seats) > COUNT(*);");
+			waitlist.setString(1, username);
+			ResultSet resultSet = waitlist.executeQuery();
+			
+			ArrayList<Integer> free_spots = new ArrayList<Integer>();
+			while (resultSet.next()) {
+				free_spots.add(resultSet.getInt(1));
+				
+//				free_spots.add();
+			}
+			String str = "There are free spots on flights that you have waitlisted: ";
+			Collections.sort(free_spots);
+			for (int i = 0; i < free_spots.size(); i++) {
+				if (i == free_spots.size() - 1) {
+					str += "Flight "+ String.valueOf(free_spots.get(i)) + ".";
+					break;
+				}
+				str += "Flight "+ String.valueOf(free_spots.get(i)) + ", ";
+			}
+			return str;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

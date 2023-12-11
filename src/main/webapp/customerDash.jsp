@@ -6,6 +6,14 @@
     <title>Customer Dashboard</title>
 </head>
 <body>
+	<% String alertFreeSpots = (String) session.getAttribute("alertFreeSpots"); session.setAttribute("alertFreeSpots", null);%>
+	<script>
+	
+    <% if (alertFreeSpots != "There are free spots on flights that you have waitlisted: " && alertFreeSpots != null) { %>
+        // JavaScript code to display an alert
+        alert("<%= alertFreeSpots %>");
+    <% } %>
+	</script>
     <h1>Welcome to the Customer Dashboard</h1>
     
     <h2>Browse Flights</h2>
