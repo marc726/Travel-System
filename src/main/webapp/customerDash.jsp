@@ -6,6 +6,7 @@
     <title>Customer Dashboard</title>
 </head>
 <body>
+	<a href="/Travel-System/login.jsp">Logout</a>
 	<% String alertFreeSpots = (String) session.getAttribute("alertFreeSpots"); session.setAttribute("alertFreeSpots", null);%>
 	<script>
 	

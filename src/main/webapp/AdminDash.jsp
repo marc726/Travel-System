@@ -5,6 +5,7 @@
     <title>Admin Dashboard</title>
 </head>
 <body>
+	<a href="/Travel-System/login.jsp">Logout</a>
     <h1>Admin Dashboard</h1>
     <ul>
         <li><a href="adminpages/customerRepManager.jsp">Customer Representative Manager</a></li>

@@ -20,6 +20,7 @@
     </style>
 </head>
 <body>
+	<a href="/Travel-System/customerDash.jsp">Back to Dashboard</a>
     <h1>Reserved Flights</h1>
 
         <!-- Refresh Button -->

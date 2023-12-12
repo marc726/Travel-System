@@ -5,6 +5,7 @@
     <title>Top Revenue Generating Customer</title>
 </head>
 <body>
+	<a href="/Travel-System/AdminDash.jsp">Back to Dashboard</a>
     <h1>Top Revenue Generating Customer</h1>
 
         <!-- Refresh Button -->

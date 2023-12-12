@@ -5,6 +5,7 @@
     <title>Revenue Summary</title>
 </head>
 <body>
+	<a href="/Travel-System/AdminDash.jsp">Back to Dashboard</a>
     <h1>Revenue Summary</h1>
     <form action="RevenueSummaryServlet" method="post">
         <select name="type">

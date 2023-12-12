@@ -14,6 +14,7 @@
     </style>
 </head>
 <body>
+	<a href="/Travel-System/customerDash.jsp">Back to Dashboard</a>
     <h1>Ask a Question</h1>
     <form action="SubmitQuestionServlet" method="POST">
         <input type="hidden" name="userId" value="${sessionScope.username}">

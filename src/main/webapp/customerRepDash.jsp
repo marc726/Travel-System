@@ -5,6 +5,7 @@
     <title>Customer Representative Dashboard</title>
 </head>
 <body>
+	<a href="/Travel-System/login.jsp">Logout</a>
     <h1>Customer Representative Dashboard</h1>
     <ul>
         <li><a href="customerRep/makeFlightReservations.jsp">Make Flight Reservations</a></li>

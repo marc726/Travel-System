@@ -7,6 +7,7 @@
     <title>Customer Dashboard</title>
 </head>
 <body>
+	<a href="/Travel-System/AdminDash.jsp">Back to Dashboard</a>
     <h1>Customer Dashboard</h1>
 
     <!-- Form for Adding a New Customer -->

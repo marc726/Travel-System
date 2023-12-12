@@ -7,6 +7,7 @@
     <title>Search Questions</title>
 </head>
 <body>
+	<a href="/Travel-System/customerDash.jsp">Back to Dashboard</a>
     <h1>Search Questions</h1>
     <form action="SearchQuestionsServlet" method="post">
         <label for="keyword">Enter keyword:</label>

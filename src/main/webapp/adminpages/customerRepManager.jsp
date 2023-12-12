@@ -7,6 +7,7 @@
     <title>Customer Representative Manager</title>
 </head>
 <body>
+	<a href="/Travel-System/AdminDash.jsp">Back to Dashboard</a>
     <h1>Customer Representative Manager</h1>
 
     <!-- Display message from servlet -->

@@ -5,6 +5,7 @@
     <title>Manage Flights</title>
 </head>
 <body>
+	<a href="/Travel-System/customerRepDash.jsp">Back to Dashboard</a>
     <h1>Manage Flights</h1>
 
     <!-- Form for Adding New Flight -->

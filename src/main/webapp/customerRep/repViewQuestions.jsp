@@ -13,6 +13,7 @@
     </style>
 </head>
 <body>
+	<a href="/Travel-System/customerRepDash.jsp">Back to Dashboard</a>
     <h1>Questions List</h1>
     <form action="FetchRepQuestionsServlet" method="GET">
         <input type="submit" value="Load All Questions"/>

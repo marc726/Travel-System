@@ -33,7 +33,7 @@ public class LoginServlet extends HttpServlet {
         if (username.equals("admin") && password.equals("admin")) {
             HttpSession session = request.getSession();
             session.setAttribute("username", "admin");
-            response.sendRedirect("adminDash.jsp");
+            response.sendRedirect("AdminDash.jsp");
             return;
         }
 

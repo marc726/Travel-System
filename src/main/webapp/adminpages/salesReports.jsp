@@ -5,6 +5,7 @@
     <title>Sales Report</title>
 </head>
 <body>
+	<a href="/Travel-System/AdminDash.jsp">Back to Dashboard</a>
     <h1>Sales Report for a Month</h1>
     <form action="SalesReportServlet" method="post">
         <label for="year">Year:</label>

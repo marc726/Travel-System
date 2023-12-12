@@ -40,6 +40,19 @@ public class TicketDAO {
 
         return new Ticket(seatNum, fare, classType, username, purchaseDate, ticketNum, bookingFee, flightNumber);
     }
+    public boolean deleteTicket(int ticket_num) {
+    	try {
+    		Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM ticket WHERE ticket_num = ?;");
+            preparedStatement.setInt(1, ticket_num);
+            preparedStatement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+       		e.printStackTrace();
+       	}
+       	return false;
+               
+    }
 
     public List<Ticket> getTicketsByFlightNumber(int flightNumber) {
         List<Ticket> tickets = new ArrayList<>();
@@ -57,6 +70,23 @@ public class TicketDAO {
             e.printStackTrace();
         }
         return tickets;
+    }
+    public ArrayList<Ticket> getTicketsByUsername(String username) {
+    	try {
+	    	Connection connection = getConnection();
+	    	PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Ticket WHERE username = ?");
+            preparedStatement.setString(1, username);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            ArrayList<Ticket> tickets = new ArrayList<Ticket>();
+            while (resultSet.next()) {
+                tickets.add(extractTicketFromResultSet(resultSet));
+            }
+            return tickets;
+    	} catch (SQLException e) {
+            e.printStackTrace();
+        }
+    	return null;
     }
 
     public List<Ticket> getTicketsByCustomerName(String customerName) {

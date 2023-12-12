@@ -15,6 +15,7 @@
     <title>Search Flights</title>
 </head>
 <body>
+	<a href="/Travel-System/customerDash.jsp">Back to Dashboard</a>
     <h1>Welcome, <%= username %></h1>
     <script>
     	function validateBookTicket() {

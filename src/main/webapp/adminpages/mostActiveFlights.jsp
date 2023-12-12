@@ -7,6 +7,7 @@
     <title>Most Active Flights</title>
 </head>
 <body>
+	<a href="/Travel-System/AdminDash.jsp">Back to Dashboard</a>
     <h1>Most Active Flights</h1>
 
         <!-- Refresh Button -->

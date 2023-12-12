@@ -7,6 +7,7 @@
     <title>Reservation List</title>
 </head>
 <body>
+	<a href="/Travel-System/AdminDash.jsp">Back to Dashboard</a>
     <h1>Search Reservations</h1>
     <form action="ReservationListServlet" method="post">
         <input type="radio" id="flightNumber" name="searchType" value="flightNumber">

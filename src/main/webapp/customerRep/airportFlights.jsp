@@ -15,6 +15,7 @@
     <title>View Waiting List for Flight</title>
 </head>
 <body>
+	<a href="/Travel-System/customerRepDash.jsp">Back to Dashboard</a>
     <script>
     	function validateFunction() {
             var flightId = document.getElementById('flightId').value;

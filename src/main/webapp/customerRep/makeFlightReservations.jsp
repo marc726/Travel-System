@@ -15,6 +15,7 @@
     <title>Search Flights</title>
 </head>
 <body>
+	<a href="/Travel-System/customerRepDash.jsp">Back to Dashboard</a>
     <h1>Create Flight Reservations for Users</h1>
     <script>
     	function validateBookTicket() {
