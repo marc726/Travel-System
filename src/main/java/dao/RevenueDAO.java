@@ -25,17 +25,17 @@ public class RevenueDAO {
     }
 
     public float getRevenueByFlight(int flightNumber) {
-        String sql = "SELECT SUM(fare) AS total_revenue FROM Ticket WHERE flight_number = ?";
+        String sql = "SELECT SUM(fare + booking_fee) AS total_revenue FROM Ticket WHERE flight_number = ?";
         return executeRevenueQuery(sql, Integer.toString(flightNumber));
     }
 
     public float getRevenueByAirline(String airlineId) {
-        String sql = "SELECT SUM(fare) AS total_revenue FROM Ticket INNER JOIN Flights ON Ticket.flight_number = Flights.flight_number WHERE alid = ?";
+        String sql = "SELECT SUM(fare + booking_fee) AS total_revenue FROM Ticket INNER JOIN Flights ON Ticket.flight_number = Flights.flight_number WHERE alid = ?";
         return executeRevenueQuery(sql, airlineId);
     }
 
     public float getRevenueByCustomer(String username) {
-        String sql = "SELECT SUM(fare) AS total_revenue FROM Ticket WHERE username = ?";
+        String sql = "SELECT SUM(fare + booking_fee) AS total_revenue FROM Ticket WHERE username = ?";
         return executeRevenueQuery(sql, username);
     }
 
@@ -55,7 +55,7 @@ public class RevenueDAO {
     }
 
     public float getSalesReportForMonth(int year, int month) {
-        String sql = "SELECT SUM(fare) AS total_sales FROM Ticket WHERE YEAR(purchase_date) = ? AND MONTH(purchase_date) = ?";
+        String sql = "SELECT SUM(fare + booking_fee) AS total_sales FROM Ticket WHERE YEAR(purchase_date) = ? AND MONTH(purchase_date) = ?";
         float totalSales = 0;
 
         try (Connection connection = getConnection();
