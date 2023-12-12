@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +101,53 @@ public class FlightDAO {
 
 	}
 
+	public ArrayList<Flight> getFlightsByAirport(String airport) {
+		try {
+			Connection connection = getConnection();
+			PreparedStatement getFlights = connection.prepareStatement("SELECT * FROM flights WHERE destination_airport = ? OR departure_airport = ?;");
+			getFlights.setString(1, airport);
+			getFlights.setString(2, airport);
+			ResultSet results = getFlights.executeQuery();
+			ArrayList<Flight> flights = new ArrayList<Flight>();
+			PreparedStatement getStopCount = connection.prepareStatement("WITH RECURSIVE FlightCTE AS ("
+					+ "  SELECT flight_number, nextflight, 1 AS execution_count"
+					+ "  FROM flights"
+					+ "  WHERE flight_number = ?"
+					+ "  UNION ALL"
+					+ "  SELECT f.flight_number, f.nextflight, fc.execution_count + 1"
+					+ "  FROM flights f"
+					+ "  INNER JOIN FlightCTE fc ON f.flight_number = fc.nextflight)"
+					+ "  SELECT COUNT(*) AS total_executions"
+					+ "  FROM FlightCTE"
+					+ "  WHERE nextflight IS NOT NULL;");
+            while (results.next()) {
+                int flightNumber = results.getInt("flight_number");
+                String alid = results.getString("alid");
+                int aircraftNumber = results.getInt("aircraft_number");
+                float price = results.getFloat("price");
+                boolean isDomestic = results.getBoolean("is_domestic");
+                int roundTrip = results.getInt("roundtrip");
+                getStopCount.setInt(1, flightNumber);
+                ResultSet resultSet = getStopCount.executeQuery();
+                resultSet.next();
+                int stops = resultSet.getInt(1);
+                String departureAirport = results.getString("departure_airport");
+                String destinationAirport = results.getString("destination_airport");
+                Time departureTime = results.getTime("departure_time");
+                Date departureDate = results.getDate("departure_date");
+                Time arrivalTime = results.getTime("arrival_time");
+                Date arrivalDate = results.getDate("arrival_date");
+                flights.add(new Flight(flightNumber, alid, aircraftNumber,price,isDomestic, roundTrip, stops, departureAirport, destinationAirport, departureTime, arrivalTime, departureDate, arrivalDate));
+            }
+			return flights;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	
 	public boolean insertFlight(Flight flight) throws SQLException {
 		String sql = "INSERT INTO Flights (flight_number, alid, aircraft_number, price, is_domestic, roundtrip, nextflight, departure_airport, destination_airport, departure_time, departure_date, arrival_time, arrival_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		try (Connection connection = getConnection();
@@ -131,12 +179,66 @@ public class FlightDAO {
 		}
 	}
 	
+	public ArrayList<String> getWaitingList(int flight_number) {
+		try {
+			Connection connection = getConnection();
+			PreparedStatement waiting_list_query = connection.prepareStatement("SELECT username FROM waiting_list WHERE flight_number = ?");
+			waiting_list_query.setInt(1, flight_number);
+			ResultSet resultSet = waiting_list_query.executeQuery();
+			ArrayList<String> waitingList = new ArrayList<String>();
+			while (resultSet.next()) {
+				waitingList.add(resultSet.getString(1));
+			}
+			return waitingList;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getFreeSpots(String username) {
+		try {
+			Connection connection = getConnection();
+			PreparedStatement waitlist = connection.prepareStatement("SELECT w.flight_number FROM waiting_list w JOIN ticket t ON w.flight_number = t.flight_number JOIN flights f ON w.flight_number = f.flight_number JOIN aircraft a ON f.aircraft_number = a.aircraft_number WHERE w.username = ? GROUP BY w.flight_number HAVING MAX(num_seats) > COUNT(*);");
+			waitlist.setString(1, username);
+			ResultSet resultSet = waitlist.executeQuery();
+			
+			ArrayList<Integer> free_spots = new ArrayList<Integer>();
+			while (resultSet.next()) {
+				free_spots.add(resultSet.getInt(1));
+				
+//				free_spots.add();
+			}
+			String str = "There are free spots on flights that you have waitlisted: ";
+			Collections.sort(free_spots);
+			for (int i = 0; i < free_spots.size(); i++) {
+				if (i == free_spots.size() - 1) {
+					str += "Flight "+ String.valueOf(free_spots.get(i)) + ".";
+					break;
+				}
+				str += "Flight "+ String.valueOf(free_spots.get(i)) + ", ";
+			}
+			return str;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public boolean bookTicket(int flight_number, String username, String classType) {
 		try {
 		Connection connection = getConnection();
+		PreparedStatement check_role = connection.prepareStatement("SELECT role FROM users WHERE username = ?");
+		check_role.setString(1, username);
+		ResultSet resultSet = check_role.executeQuery();
+		resultSet.next();
+		if (resultSet.getInt(1) != 0) {//if user is not a customer
+			System.out.println("User is not a customer");
+			return false;
+		}
 		PreparedStatement flight_exists = connection.prepareStatement("SELECT COUNT(*) FROM flights WHERE flight_number = ?");
 		flight_exists.setInt(1, flight_number);
-		ResultSet resultSet = flight_exists.executeQuery();
+		resultSet = flight_exists.executeQuery();
 		resultSet.next();
 		if (resultSet.getInt(1) == 0) {//if flight does not exist
 			System.out.println("Flight does not exist");

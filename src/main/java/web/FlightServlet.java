@@ -40,8 +40,13 @@ public class FlightServlet extends HttpServlet {
 		    case "getFlights":
 		        getFlights(request, response);
 		        break;
+		    case "getWaitingList":
+		        getWaitingList(request, response);
+		        break;
+		    case "getFlightsByAirline":
+		    	getFlightsByAirline(request, response);
+		    	break;
 		    default:
-		        response.sendRedirect("customerPages/browseFlightsCustomer.jsp");
 		        break;
 		}
     }
@@ -82,5 +87,26 @@ public class FlightServlet extends HttpServlet {
  		
 		request.getSession().setAttribute("flights", filteredFlights);
 		response.sendRedirect("customerPages/browseFlightsCustomer.jsp");
+	}
+    private void getFlightsByAirline(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String airport = request.getParameter("airportId");
+
+	
+		System.out.println(airport);
+
+		ArrayList<Flight> flights = flightDAO.getFlightsByAirport(airport);
+
+ 		
+		request.getSession().setAttribute("flights", flights);
+		response.sendRedirect("customerRep/airportFlights.jsp");
+	}
+    private void getWaitingList(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		int flightId = Integer.valueOf(request.getParameter("flightId"));
+		
+		
+		ArrayList<String> waitingList = flightDAO.getWaitingList(flightId);
+		waitingList.forEach(username -> System.out.println(username));
+		request.getSession().setAttribute("waitingList", waitingList);
+		response.sendRedirect("customerRep/waitingList.jsp");
 	}
 }
