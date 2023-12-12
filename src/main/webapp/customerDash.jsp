@@ -22,3 +22,8 @@
     <ul>
         <li><a href="customerPages/questionForumCustomer.jsp">Browse and send questions to customer representatives</a></li>
     </ul>
+
+    <h2>Search Customer Support</h2>
+    <ul>
+        <li><a href="customerPages/searchQuestions.jsp">Browse and send questions to customer representatives</a></li>
+    </ul>

@@ -102,4 +102,27 @@ public class QuestionsDAO {
             return count > 0;
         }
     }
+
+    
+    public List<Question> searchQuestions(String keyword) {
+        List<Question> questions = new ArrayList<>();
+        String sql = "SELECT * FROM Questions WHERE question_text LIKE ? OR answer_text LIKE ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, "%" + keyword + "%");
+            preparedStatement.setString(2, "%" + keyword + "%");
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("question_id");
+                String questionText = resultSet.getString("question_text");
+                String answerText = resultSet.getString("answer_text");
+                questions.add(new Question(id, questionText, answerText));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return questions;
+    }
 }
